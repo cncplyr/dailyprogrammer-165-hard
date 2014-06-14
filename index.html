@@ -61,22 +61,26 @@
 			
 			for(var x = 0; x < map.mapSize; x++){
 				for(var y = 0; y < map.mapSize; y++){
-					var agent = map.get(x, y);
+					var agents = map.get(x, y);
 				
-					if(agent != null) {
+					if (agents instanceof Array && agents.length > 0) {
 						// Set the colour for that animal
-						switch(agent[0].type){ // TODO 
-							case "sapling" :
+						switch(agents[agents.length - 1].type){ // TODO 
+							case "sapling":
 								// saplings are light green 
 								ctx.fillStyle = "rgb(152, 251, 152)";
 								break;
-							case "mature" :
+							case "mature":
 								// mature are medium green
 								ctx.fillStyle = "rgb(119, 221, 119)";
 								break;
-							case "elder" :
+							case "elder":
 								// elder are dark green
 								ctx.fillStyle = "rgb(34, 139, 34)";
+								break;
+							case "lumberjack":
+								// lumberjacks wear red
+								ctx.fillStyle = "rgb(190, 0, 50)";
 								break;
 						}
 						// Draw a circle where the animal is

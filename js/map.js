@@ -34,16 +34,18 @@ Map.prototype.put = function(x, y, obj) {
 			obj.x = posX;
 			obj.y = posY;
 		} else {
-			console.log(obj.name + " is already at that location!");
+			console.log('Error: ' + obj + ' is already at that location!');
 		}
 	}
 }
 
 Map.prototype.remove = function(x, y, obj) {
-	var grid = this.grid;
-	var index = $.inArray(obj, grid);
-	if (index > -1) {
-		grid.splice(index, 1);
+	var currentLocation = this.grid[x][y];
+	if (currentLocation instanceof Array) {
+		var index = $.inArray(obj, currentLocation);
+		if (index > -1) {
+			currentLocation.splice(index, 1);
+		}
 	}
 }
 
@@ -51,30 +53,22 @@ Map.prototype.get = function(x, y) {
 	return this.grid[x][y];
 }
 
-Map.prototype.getLocale = function(xCoord, yCoord) {
-	var surroundings = {
-		grid: [],
-		empty: [],
-	};
+// Returns 3x3 local area as a flat array, elems have x/y coords
+Map.prototype.getLocalArea = function(xCoord, yCoord) {
+	var localArea = [];
 	for (var x = -1; x < 2; x++) {
 		for (var y = -1; y < 2; y++) {
 			var posX = this.getSafeCoord(xCoord + x);
 			var posY = this.getSafeCoord(yCoord + y);
 			
-			surroundings.grid.push({
+			localArea.push({
 				x: posX,
 				y: posY,
 				objects: this.grid[posX][posY]
 			});
-			if (this.grid[posX][posY] == null) {
-				surroundings.empty.push({
-					x: posX,
-					y: posY
-				});
-			}
 		}
 	}
-	return surroundings;
+	return localArea;
 }
 
 // Toroid
