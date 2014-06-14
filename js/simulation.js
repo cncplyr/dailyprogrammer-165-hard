@@ -22,8 +22,8 @@ Simulation.prototype.initialise = function() {
 	// Spawn trees (50% chance per location)
 	this.spawn(Tree, 0.5);
 	
-	// Spawn lumberjacks (10% chance per location)
-	this.spawn(Lumberjack, 0.1);
+	// Spawn lumberjacks (1% chance per location)
+	this.spawn(Lumberjack, 0.01);
 	
 }
 Simulation.prototype.spawn = function(object, chance) {
@@ -41,7 +41,8 @@ Simulation.prototype.spawn = function(object, chance) {
 					case 'sapling':
 					case 'mature':
 					case 'elder':
-						obj.setAge(12);				
+						// Set age between 12 and 120 months
+						obj.setAge(Math.floor(Math.random() * 109) + 12);				
 						this.trees.push(obj);
 						break;
 					case 'lumberjack':
@@ -51,4 +52,26 @@ Simulation.prototype.spawn = function(object, chance) {
 			}
 		}
 	}
+}
+Simulation.prototype.remove = function(x, y, obj) {
+	switch (obj.type) {
+		case 'sapling':
+		case 'mature':
+		case 'elder':
+			var trees = this.trees;
+			var index = $.inArray(obj, trees);
+			if (index > -1) {
+				trees.splice(index, 1);
+			}
+			break;
+		case 'lumberjack':
+			var lumberjacks = this.lumberjacks;
+			var index = $.inArray(obj, lumberjacks);
+			if (index > -1) {
+				lumberjacks.splice(index, 1);
+			}
+			break;
+	}
+	
+	this.map.remove(x, y, obj);
 }

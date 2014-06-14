@@ -19,14 +19,16 @@
 	
 	<script type="text/javascript">
 		var canvas = document.getElementById('canvas');
-		var s = new Simulation(20);
+		var cellSize = 10;
+		var simulationSize = 25
+		var s = new Simulation(simulationSize);
 		var running = false;
 		
 		draw();
 		setInterval('run()', 50);
 		
 		function reset() {
-			s = new Simulation(20);
+			s = new Simulation(simulationSize);
 			draw();
 		}
 		
@@ -53,7 +55,7 @@
 			canvas.width = canvas.width;
 			var ctx = canvas.getContext("2d");x
 			
-			var size = 15;
+			var size = cellSize;
 			var map = s.map
 			
 			ctx.save();

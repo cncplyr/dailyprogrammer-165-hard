@@ -107,7 +107,7 @@ Lumberjack.prototype.tickMonth = function() {
 		}
 		// Found a tree, cut it down!
 		if (tree !== null) {
-			map.remove(this.x, this.y, tree);
+			this.simulation.remove(this.x, this.y, tree);
 			treeFound = true;
 		}
 		
