@@ -20,7 +20,7 @@
 	<script type="text/javascript">
 		var canvas = document.getElementById('canvas');
 		var cellSize = 10;
-		var simulationSize = 50
+		var simulationSize = 59
 		var s = new Simulation(simulationSize);
 		var running = false;
 		
@@ -53,7 +53,7 @@
 	
 		function draw() {
 			canvas.width = canvas.width;
-			var ctx = canvas.getContext("2d");x
+			var ctx = canvas.getContext('2d');x
 			
 			var size = cellSize;
 			var map = s.map
@@ -68,21 +68,25 @@
 					if (agents instanceof Array && agents.length > 0) {
 						// Set the colour for that animal
 						switch(agents[agents.length - 1].type){ // TODO 
-							case "sapling":
+							case 'sapling':
 								// saplings are light green 
-								ctx.fillStyle = "rgb(152, 251, 152)";
+								ctx.fillStyle = 'rgb(152, 251, 152)';
 								break;
-							case "mature":
+							case 'mature':
 								// mature are medium green
-								ctx.fillStyle = "rgb(119, 221, 119)";
+								ctx.fillStyle = 'rgb(119, 221, 119)';
 								break;
-							case "elder":
+							case 'elder':
 								// elder are dark green
-								ctx.fillStyle = "rgb(34, 139, 34)";
+								ctx.fillStyle = 'rgb(34, 139, 34)';
 								break;
-							case "lumberjack":
+							case 'lumberjack':
 								// lumberjacks wear red
-								ctx.fillStyle = "rgb(190, 0, 50)";
+								ctx.fillStyle = 'rgb(190, 0, 50)';
+								break;
+							case 'bear':
+								// bears are brown
+								ctx.fillStyle = 'rgb(150, 75, 0)';
 								break;
 						}
 						// Draw a circle where the animal is

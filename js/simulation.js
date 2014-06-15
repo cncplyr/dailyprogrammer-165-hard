@@ -2,7 +2,7 @@ function Simulation(mapSize) {
 	this.map = new Map(mapSize);
 	this.map.simulation = this;
 	
-	this.months = 0;
+	this.month = 0;
 	
 	this.trees = [];
 	this.lumberjacks = [];
@@ -13,22 +13,25 @@ function Simulation(mapSize) {
 	this.initialise();
 }
 Simulation.prototype.tickMonth = function() {
-	if (this.months > 11 && this.months % 12 == 0) {
-		console.log('lumber: ' + this.lumber);
-		console.log('lumberjacks: ' + this.lumberjacks.length);
+	// Check end of year
+	if (this.month > 11 && this.month % 12 == 0) {
+		// Log some statistics
+		console.log('year: ' + this.month/12 + '\t\tlumber: ' + this.lumber + '\tjacks: ' + this.lumberjacks.length + '\tmauls: ' + this.mauls +  '\tbears: ' + this.bears.length);
+
+		// Monitor the lumberjack population
 		if (this.lumber > this.lumberjacks.length) {
-			// Hire some lumberjacks
+			// Lots of lumber, hire more lumberjacks!
 			var newHireCount = Math.floor(this.lumber / this.lumberjacks.length);
-			console.log('hiring ' + newHireCount + ' new luberjacks!');
-			this.spawnMobileAgents(Lumberjack, newHireCount);
+			//console.log('\t\t\t\t\t\t\t\t+' + newHireCount + ' lumberjacks!');
+			this.spawnAgents(Lumberjack, newHireCount);
 		} else {
-			// Fire some lumberjacks
+			// Not much lumber, fire some lumberjacks!
 			if (this.lumberjacks.length > 1) {
 				var removals = Math.floor(this.lumberjacks.length / this.lumber);
 				if (removals > this.lumberjacks.length - 1) {
 					removals = this.lumberjacks.length - 1;
 				}
-				console.log('firing ' + removals + ' lumberjacks!');
+				//console.log('\t\t\t\t\t\t\t\t-' + removals + ' lumberjacks!');
 				while (removals > 0) {
 					var index = Math.floor(Math.random() * this.lumberjacks.length);
 					var exLumberjack = this.lumberjacks[index];
@@ -38,13 +41,30 @@ Simulation.prototype.tickMonth = function() {
 				}
 			}
 		}
+		if (this.lumberjacks.length === 0) {
+			this.spawnAgents(Lumberjack, 1);
+		}
+
+		// Monitor the bear population
+		if (this.mauls > 1) {
+			// Maulings occured, cull a bears!
+			var index = Math.floor(Math.random() * this.bears.length);
+			var exBear = this.bears[index];
+			this.map.remove(exBear.x, exBear.y, exBear);
+			this.bears.splice(index, 1);
+		} else if (this.mauls === 0) {
+			// No maulings this year, new bear moves in
+			this.spawnAgents(Bear, 1);
+		}
 		
 		this.lumber = 0;
 		this.mauls = 0;
 	}
 
+	// Monthly updates
 	var trees = this.trees;
 	var lumberjacks = this.lumberjacks;
+	var bears = this.bears;
 	
 	$.each(trees, function(k, v) {
 		v.tickMonth();
@@ -54,15 +74,21 @@ Simulation.prototype.tickMonth = function() {
 		v.tickMonth();
 	});
 	
-	this.months++;	
+	$.each(bears, function(k, v) {
+		v.tickMonth();
+	});
+	
+	this.month++;	
 }
 Simulation.prototype.initialise = function() {
 	// Spawn trees (50% chance per location)
 	this.spawn(Tree, 0.5);
 	
-	// Spawn lumberjacks (1% chance per location)
-	this.spawn(Lumberjack, 0.01);
+	// Spawn lumberjacks (10% chance per location)
+	this.spawn(Lumberjack, 0.1);
 	
+	// Spawn bears (2% chance per location)
+	this.spawn(Bear, 0.02)
 }
 Simulation.prototype.spawn = function(object, chance) {
 	var map = this.map;
@@ -86,12 +112,15 @@ Simulation.prototype.spawn = function(object, chance) {
 					case 'lumberjack':
 						this.lumberjacks.push(obj);
 						break;
+					case 'bear':
+						this.bears.push(obj);
+						break;
 				}
 			}
 		}
 	}
 }
-Simulation.prototype.spawnMobileAgents = function(object, count) {
+Simulation.prototype.spawnAgents = function(object, count) {
 	for (var i = 0; i < count; i++) {
 		var obj = new object();
 		obj.simulation = this;
@@ -104,6 +133,9 @@ Simulation.prototype.spawnMobileAgents = function(object, count) {
 		switch(obj.type) {
 			case 'lumberjack':
 				this.lumberjacks.push(obj);
+				break;
+			case 'bear':
+				this.bears.push(obj);
 				break;
 		}
 	}
@@ -125,6 +157,7 @@ Simulation.prototype.remove = function(x, y, obj) {
 			if (index > -1) {
 				lumberjacks.splice(index, 1);
 			}
+			this.mauls++;
 			break;
 	}
 	
