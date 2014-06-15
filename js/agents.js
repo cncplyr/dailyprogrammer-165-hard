@@ -107,6 +107,12 @@ Lumberjack.prototype.tickMonth = function() {
 		}
 		// Found a tree, cut it down!
 		if (tree !== null) {
+			if (tree.type == 'mature') {
+				this.simulation.reportLumber(1);
+			} else if (tree.type == 'elder') {
+				this.simulation.reportLumber(2);
+			}
+		
 			this.simulation.remove(this.x, this.y, tree);
 			treeFound = true;
 		}

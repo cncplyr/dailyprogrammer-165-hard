@@ -1,12 +1,44 @@
 function Simulation(mapSize) {
 	this.map = new Map(mapSize);
 	this.map.simulation = this;
+	
+	this.months = 0;
+	
 	this.trees = [];
 	this.lumberjacks = [];
+	this.lumber = 0;
 	
 	this.initialise();
 }
 Simulation.prototype.tickMonth = function() {
+	if (this.months % 12 == 0) {
+		console.log('lumber: ' + this.lumber);
+		console.log('lumberjacks: ' + this.lumberjacks.length);
+		if (this.lumber > this.lumberjacks.length) {
+			// Hire some lumberjacks
+			var newHireCount = Math.floor(this.lumber / this.lumberjacks.length);
+			console.log('hiring ' + newHireCount + ' new luberjacks!');
+			this.spawnMobileAgents(Lumberjack, newHireCount);
+		} else {
+			// Fire some lumberjacks
+			if (this.lumberjacks.length > 1) {
+				var removals = Math.floor(this.lumberjacks.length / this.lumber);
+				if (removals > this.lumberjacks.length - 1) {
+					removals = this.lumberjacks.length - 1;
+				}
+				console.log('firing ' + removals + ' lumberjacks!');
+				while (removals > 0) {
+					var index = Math.floor(Math.random() * this.lumberjacks.length + 1);
+					var exLumberjack = this.lumberjacks[index];
+					this.map.remove(exLumberjack.x, exLumberjack.y, exLumberjack);
+					this.lumberjacks.splice(index, 1);
+				}
+			}
+		}
+		
+		this.lumber = 0;
+	}
+
 	var trees = this.trees;
 	var lumberjacks = this.lumberjacks;
 	
@@ -17,6 +49,8 @@ Simulation.prototype.tickMonth = function() {
 	$.each(lumberjacks, function(k, v) {
 		v.tickMonth();
 	});
+	
+	this.months++;	
 }
 Simulation.prototype.initialise = function() {
 	// Spawn trees (50% chance per location)
@@ -53,6 +87,23 @@ Simulation.prototype.spawn = function(object, chance) {
 		}
 	}
 }
+Simulation.prototype.spawnMobileAgents = function(object, count) {
+	for (var i = 0; i < count; i++) {
+		var obj = new object();
+		obj.simulation = this;
+		
+		var x = Math.floor(Math.random() * this.map.mapSize);
+		var y = Math.floor(Math.random() * this.map.mapSize);
+		
+		this.map.put(x, y, obj);
+		
+		switch(obj.type) {
+			case 'lumberjack':
+				this.lumberjacks.push(obj);
+				break;
+		}
+	}
+}
 Simulation.prototype.remove = function(x, y, obj) {
 	switch (obj.type) {
 		case 'sapling':
@@ -74,4 +125,7 @@ Simulation.prototype.remove = function(x, y, obj) {
 	}
 	
 	this.map.remove(x, y, obj);
+}
+Simulation.prototype.reportLumber = function(amount) {
+	this.lumber += amount;
 }
