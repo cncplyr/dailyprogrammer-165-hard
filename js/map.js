@@ -55,6 +55,7 @@ Map.prototype.get = function(x, y) {
 
 // Returns 3x3 local area as a flat array, elems have x/y coords
 Map.prototype.getLocalArea = function(xCoord, yCoord) {
+	// TODO: Find a faster way to do this
 	var localArea = [];
 	for (var x = -1; x < 2; x++) {
 		for (var y = -1; y < 2; y++) {
