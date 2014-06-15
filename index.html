@@ -12,14 +12,14 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 </head>
 <body>
-	<canvas id="canvas" width="350" height="350"></canvas>
+	<canvas id="canvas" width="600" height="600"></canvas>
 	<button type="button" onclick="reset();">Reset</button>
 	<button type="button" onclick="tickMonth();">Tick</button>
 	<button type="button" onclick="toggleRun();">Run/Stop</button>
 	
 	<script type="text/javascript">
 		var canvas = document.getElementById('canvas');
-		var cellSize = 5;
+		var cellSize = 10;
 		var simulationSize = 50
 		var s = new Simulation(simulationSize);
 		var running = false;

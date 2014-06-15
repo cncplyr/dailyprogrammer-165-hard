@@ -6,12 +6,14 @@ function Simulation(mapSize) {
 	
 	this.trees = [];
 	this.lumberjacks = [];
+	this.bears = [];
 	this.lumber = 0;
+	this.mauls = 0;
 	
 	this.initialise();
 }
 Simulation.prototype.tickMonth = function() {
-	if (this.months % 12 == 0) {
+	if (this.months > 11 && this.months % 12 == 0) {
 		console.log('lumber: ' + this.lumber);
 		console.log('lumberjacks: ' + this.lumberjacks.length);
 		if (this.lumber > this.lumberjacks.length) {
@@ -28,15 +30,17 @@ Simulation.prototype.tickMonth = function() {
 				}
 				console.log('firing ' + removals + ' lumberjacks!');
 				while (removals > 0) {
-					var index = Math.floor(Math.random() * this.lumberjacks.length + 1);
+					var index = Math.floor(Math.random() * this.lumberjacks.length);
 					var exLumberjack = this.lumberjacks[index];
 					this.map.remove(exLumberjack.x, exLumberjack.y, exLumberjack);
 					this.lumberjacks.splice(index, 1);
+					removals--;
 				}
 			}
 		}
 		
 		this.lumber = 0;
+		this.mauls = 0;
 	}
 
 	var trees = this.trees;

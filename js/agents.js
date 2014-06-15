@@ -25,52 +25,54 @@ Tree.prototype.tickMonth = function() {
 	var newAge = this.age + 1;
 	this.setAge(newAge);
 	
-	// Get the tree's surroundings
-	var localArea = map.getLocalArea(this.x, this.y);
-	var emptyLocations = [];
-	
-	// Check each surrounding location
-	for (var i = 0; i < localArea.length; i++) {
-		// Nothing in this location
-		if (!(localArea[i].objects instanceof Array)) {
-			emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
-		// Nothing in this location either
-		} else if (localArea[i].objects.length === 0) {
-			emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
-		// Something here, check if it's a tree
-		} else {
-			var treeFound = false;
-			for (var j = 0; j < localArea[i].objects.length; j++) {
-				if (localArea[i].objects[j].type === 'sapling' ||
-					localArea[i].objects[j].type === 'mature' || 
-					localArea[i].objects[j].type === 'elder') {
-					// There's a tree here!
-					treeFound = true;
-					break;
-				}
-			}
-			if (!treeFound) {
-				emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
-			}
-		}
-	}
-	
+		
 	// Check if we can and should spawn a new tree
-	if (12 <= this.age && emptyLocations.length > 0) {
+	if (12 <= this.age) {
 		var chance = Math.random();
 	
 		if ((this.age < 120 && chance < 0.1) || 
 			(120 < this.age && chance < 0.2)) {
+			// Check there's space to spawn a tree
+			var localArea = map.getLocalArea(this.x, this.y);
+			var emptyLocations = [];
 			
-			var index = Math.floor(Math.random() * emptyLocations.length);
-			// Spawn a new tree!
-			var newTree = new Tree();
-			newTree.simulation = this.simulation;
-			this.simulation.trees.push(newTree);
-			map.put(emptyLocations[index].x, 
-					emptyLocations[index].y,
-					newTree
-			);
+			// Check each surrounding location
+			for (var i = 0; i < localArea.length; i++) {
+				// Nothing in this location
+				if (!(localArea[i].objects instanceof Array)) {
+					emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
+				// Nothing in this location either
+				} else if (localArea[i].objects.length === 0) {
+					emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
+				// Something here, check if it's a tree
+				} else {
+					var treeFound = false;
+					for (var j = 0; j < localArea[i].objects.length; j++) {
+						if (localArea[i].objects[j].type === 'sapling' ||
+							localArea[i].objects[j].type === 'mature' || 
+							localArea[i].objects[j].type === 'elder') {
+							// There's a tree here!
+							treeFound = true;
+							break;
+						}
+					}
+					if (!treeFound) {
+						emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
+					}
+				}
+			}
+			
+			if (emptyLocations.length > 0) {
+				var index = Math.floor(Math.random() * emptyLocations.length);
+				// Spawn a new tree!
+				var newTree = new Tree();
+				newTree.simulation = this.simulation;
+				this.simulation.trees.push(newTree);
+				map.put(emptyLocations[index].x, 
+						emptyLocations[index].y,
+						newTree
+				);
+			}
 		} 
 	}
 }
