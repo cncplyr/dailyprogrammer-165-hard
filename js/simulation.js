@@ -153,16 +153,16 @@ Simulation.prototype.spawnAgent = function(x, y, agent) {
 	this.map.put(x, y, agent);
 	
 	switch(agent.type) {
+		case 'sapling':
+		case 'mature':
+		case 'elder':
+			this.trees.push(agent);
+			break;
 		case 'lumberjack':
 			this.lumberjacks.push(agent);
 			break;
 		case 'bear':
 			this.bears.push(agent);
-			break;
-		case 'sapling':
-		case 'mature':
-		case 'elder':
-			this.trees.push(agent);
 			break;
 	}
 }
@@ -197,6 +197,12 @@ Simulation.prototype.remove = function(agent) {
 				lumberjacks.splice(index, 1);
 			}
 			this.mauls++;
+			break;
+		case 'bear':
+			var index = $.inArray(agent, bears);
+			if (index > -1) {
+				bears.splice(index, 1);
+			}
 			break;
 	}
 	
