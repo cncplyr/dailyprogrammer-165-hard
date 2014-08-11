@@ -49,7 +49,7 @@ Tree.prototype.tickMonth = function() {
 				// Nothing in this location
 				if (!(localArea[i].objects instanceof Array)) {
 					emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
-				// Nothing in this location either
+				// Nothing in this location
 				} else if (localArea[i].objects.length === 0) {
 					emptyLocations.push({x: localArea[i].x, y: localArea[i].y});
 				// Something here, check if it's a tree
@@ -105,22 +105,20 @@ Lumberjack.prototype.tickMonth = function() {
 		// Check for trees
 		var trees = this.simulation.checkFor(this.x, this.y, Tree);
 		
-		if (trees.length > 0) {
-			for (var i = 0; i < trees.length; i++) {
-				if (trees[i].type === 'sapling') {
-					continue;
-				} else if (trees[i].type === 'mature') {
-					this.simulation.remove(trees[i]);
-					this.simulation.reportLumber(1);
-					break;
-				} else if (trees[i].type === 'elder') {
-					this.simulation.remove(trees[i]);
-					this.simulation.reportLumber(2);
-					break;
-				}
+		for (var i = 0; i < trees.length; i++) {
+			if (trees[i].type === 'sapling') {
+				continue;
+			} else if (trees[i].type === 'mature') {
+				this.simulation.remove(trees[i]);
+				this.simulation.reportLumber(1);
+				break;
+			} else if (trees[i].type === 'elder') {
+				this.simulation.remove(trees[i]);
+				this.simulation.reportLumber(2);
+				break;
 			}
 		}
-		
+	
 		movesRemaining--;
 	}
 }
