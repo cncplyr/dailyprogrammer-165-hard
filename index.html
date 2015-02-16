@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<title>Daily Programmer #165 [Hard]: Simulated Ecology - The Forest</title>
 	
-	<!-- 3rd Party -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<!-- JQuery -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<!-- d3 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+	<!-- c3 -->
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.9/c3.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.9/c3.min.js"></script>
 	
 	<!-- Ours -->
 	<script src="js/map.js"></script>
@@ -17,15 +22,24 @@
 <body>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-md-10">
+			<div id="canvas-container" class="col-xs-9">
 				<canvas id="canvas" width="600" height="600"></canvas>
 			</div>
-			<div class="col-md-2 panel panel-default">
-				<div class="panel-body">
-					<button type="button" class="btn btn-default btn-block" onclick="reset();">Reset</button>
-					<button type="button" class="btn btn-default btn-block" onclick="tickMonth();">Tick</button>
-					<button type="button" class="btn btn-primary btn-block" onclick="toggleRun();">Start/Stop</button>
-				</div>
+			<div class="col-xs-3">
+				<h3>Statistics</h3>
+				<div id="chart"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-2">
+				<button type="button" class="btn btn-primary btn-block" onclick="toggleRun();">Start/Stop</button>
+				<button type="button" class="btn btn-default btn-block" onclick="reset();">Reset</button>
+			</div>
+			<div class="col-xs-2">
+				<button type="button" class="btn btn-default btn-block" onclick="tickMonth();">Tick</button>
+			</div>
+			<div class="col-xs-8">
+				
 			</div>
 		</div>
 	</div>
@@ -36,9 +50,6 @@
 		var simulationSize = 59
 		var s = new Simulation(simulationSize);
 		var running = false;
-		
-		draw();
-		setInterval('run()', 50);
 		
 		function reset() {
 			s = new Simulation(simulationSize);
@@ -57,12 +68,13 @@
 	
 		function tickMonth() {
 			s.tickMonth();
+			updateChart();
 			draw();
 		}
 	
 		function draw() {
 			canvas.width = canvas.width;
-			var ctx = canvas.getContext('2d');x
+			var ctx = canvas.getContext('2d');
 			
 			var size = cellSize;
 			var map = s.map
@@ -99,9 +111,9 @@
 								break;
 						}
 						// Draw a circle where the animal is
-						ctx.moveTo(x*size+(size/2),y*size);
+						ctx.moveTo(x * size + (size / 2), y * size);
 						ctx.beginPath();
-						ctx.arc(x*size, y*size, size/2, 0, 2*Math.PI);
+						ctx.arc(x * size, y * size, size / 2, 0, 2 * Math.PI);
 						ctx.closePath();
 						ctx.fill();
 					}
@@ -109,6 +121,32 @@
 			}
 			
 			ctx.restore();
+		}
+		
+		$(document).ready(function() {
+			draw();
+			setInterval('run()', 50);
+		});
+	</script>
+	
+	<script type="text/javascript">
+		var chart = c3.generate({
+			bindto: '#chart',
+			data: {
+				columns: [
+					['lumberjacks', 0],
+					['bears', 0],
+					['trees', 0]
+				]
+			}
+		});
+		
+		function updateChart() {
+			chart.load({
+				columns: [
+					['lumberjacks', Math.floor(Math.random() * 200), Math.floor(Math.random() * 200), Math.floor(Math.random() * 200)]
+				]
+			});
 		}
 	</script>
 	
